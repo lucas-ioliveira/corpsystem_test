@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Rest Api
     'rest_framework',
     #My apps
+    'clientes',
 ]
 
 MIDDLEWARE = [
