@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     #My apps
     'clientes',
     'vendedor',
-    'produto'
+    'produto',
+    'vendas',
 ]
 
 MIDDLEWARE = [
