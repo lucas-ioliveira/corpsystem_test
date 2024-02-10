@@ -17,10 +17,10 @@ class CadastroClientes(models.Model):
     dt_criacao = models.DateField(verbose_name="data de criacao", auto_now_add=True, blank=True, null=True)
     dt_atualizacao = models.DateField(verbose_name="data de atualizacao", auto_now=True, blank=True, null=True)
 
-class Meta:
-    db_table = "cadastro_clientes"
-    verbose_name = "cadastro de cliente"
-    verbose_name_plural = "cadastros de clientes"
+    class Meta:
+        db_table = "cadastro_clientes"
+        verbose_name = "cadastro de cliente"
+        verbose_name_plural = "cadastros de clientes"
 
-def __str__(self):
-    return self.usuario
+    def __str__(self):
+        return self.nome + " " + self.sobrenome
