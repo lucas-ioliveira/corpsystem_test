@@ -32,6 +32,8 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 # Application definition
 
 INSTALLED_APPS = [
+     # django-jazzmin
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +43,8 @@ INSTALLED_APPS = [
     # Rest Api
     'rest_framework',
     'rest_framework.authtoken',
+     # Swagger
+    'drf_yasg',
     #My apps
     'clientes',
     'vendedor',
@@ -83,12 +87,25 @@ WSGI_APPLICATION = 'corpsystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.getenv('ENVIRONMENT') == 'dev':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+elif os.getenv('ENVIRONMENT') == 'test':
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE'),
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+        }
+    }
 
 
 # Password validation
@@ -137,4 +154,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     )
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic',
+        }
+    },
+}
+
+REDOC_SETTINGS = {
+   'LAZY_RENDERING': False,
 }

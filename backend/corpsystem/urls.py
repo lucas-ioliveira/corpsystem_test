@@ -16,6 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# swagger
+from django.urls import re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Corpsystem teste de código - API",
+      default_version='v1',
+      description="Documentação da API da CorpSystem",
+      contact=openapi.Contact(email="lucasio2008@gmail.com"),
+      license=openapi.License(name="MIT License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +42,11 @@ urlpatterns = [
     path('api/v1/vendas/', include('vendas.urls')),
     path('api/v1/relatorios/', include('relatorios.urls')),
     path('api/v1/login/', include('login.urls')),
+    # swagger
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
+admin.AdminSite.site_header = 'CorpSystem ERP'
+admin.AdminSite.site_title = 'CorpSystem ERP'
