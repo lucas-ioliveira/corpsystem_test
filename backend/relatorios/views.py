@@ -12,7 +12,7 @@ from vendas.models import Vendas
 from relatorios.serializers import RelatorioVendasSerializer
 
 class ExportarRelatorioView(APIView):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
             data = self.request.data.get('data')
             vendedor = self.request.data.get('vendedor')
