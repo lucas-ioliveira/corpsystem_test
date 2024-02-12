@@ -1,11 +1,10 @@
-from django.http import HttpResponse
-from rest_framework.views import APIView
+from django.http import HttpResponse, FileResponse
 from rest_framework.response import Response
+from rest_framework.views import APIView
 import os
 import pandas as pd
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, Paragraph
-from django.http import FileResponse
 from reportlab.lib.styles import getSampleStyleSheet
 from datetime import datetime
 from vendas.models import Vendas
@@ -13,11 +12,13 @@ from relatorios.serializers import RelatorioVendasSerializer
 
 class ExportarRelatorioView(APIView):
     def post(self, request, *args, **kwargs):
+        pdf_filename = None
+        excel_filename = None
         try:
-            data = self.request.data.get('data')
-            vendedor = self.request.data.get('vendedor')
-            cliente = self.request.data.get('cliente')
-            opcao = request.query_params.get('opcao')
+            data = request.data.get('data')
+            vendedor = request.data.get('vendedor')
+            cliente = request.data.get('cliente')
+            opcao = request.data.get('opcao')
 
             vendas = Vendas.objects.all()
             if data:
@@ -31,24 +32,31 @@ class ExportarRelatorioView(APIView):
             data = serializer.data
 
             if opcao == 'pdf':
-                pdf_filename = 'relatorio_vendas.xlsx'
+                pdf_filename = 'relatorio_vendas.pdf'
                 self.exportar_para_pdf(data, pdf_filename)
 
-                # Remover o arquivo Excel após retornar a resposta
-                response = HttpResponse(content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename="exemplo.pdf"'
-                os.remove(pdf_filename)
+                # Construir a resposta PDF
+                response = FileResponse(open(pdf_filename, 'rb'), content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="relatorio_vendas.pdf"'
             
             elif opcao == 'excel':
                 excel_filename = 'relatorio_vendas.xlsx'
                 self.exportar_para_excel(data, excel_filename)
 
-                # Remover o arquivo Excel após retornar a resposta
+                # Construir a resposta Excel
                 response = FileResponse(open(excel_filename, 'rb'), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
                 response['Content-Disposition'] = 'attachment; filename="relatorio_vendas.xlsx"'
+            else:
+                return Response({'detail': 'Opção inválida. Escolha entre "pdf" ou "excel".'})
+            
+            if excel_filename:
                 os.remove(excel_filename)
 
+            if pdf_filename:
+                os.remove(pdf_filename)
+
             return response
+
         except Exception as e:
             return Response({'detail': str(e)})
 
@@ -57,24 +65,12 @@ class ExportarRelatorioView(APIView):
         df.to_excel(filename, index=False)
 
     def exportar_para_pdf(self, data, filename):
-        # Criar um documento PDF
         doc = SimpleDocTemplate(filename, pagesize=letter)
-
-        # Definir estilos
         styles = getSampleStyleSheet()
         header_style = styles['Heading1']
-
-        # Conteúdo do PDF
-        conteudo = [
-            Paragraph("Relatório de Vendas", header_style),
-        ]
-
-        # Criar a tabela com os dados
+        conteudo = [Paragraph("Relatório de Vendas", header_style)]
         table_data = [["Data da Venda", "Nome do Vendedor", "Nome do Cliente"]]
         for item in data:
             table_data.append([item['data_venda'], item['vendedor_nome'], item['cliente_nome']])
         table = Table(table_data)
-
-        # Adicionar conteúdo e tabela ao documento
         doc.build(conteudo + [table])
-       
