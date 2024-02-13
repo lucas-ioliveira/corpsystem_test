@@ -60,7 +60,6 @@
             <!-- Formulário de edição do cliente -->
             <label for="nome">Nome:</label>
             <input type="text" v-model="clienteSelecionado.nome" id="nome">
-            <!-- Adicione mais campos conforme necessário para editar os dados do cliente -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="fecharModal">Fechar</button>

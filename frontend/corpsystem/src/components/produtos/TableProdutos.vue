@@ -48,7 +48,6 @@
             <!-- Formulário de edição do cliente -->
             <label for="nome">Nome:</label>
             <input type="text" v-model="clienteSelecionado.nome" id="nome">
-            <!-- Adicione mais campos conforme necessário para editar os dados do cliente -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="fecharModal">Fechar</button>
@@ -102,15 +101,13 @@ export default {
         });
     },
     editarCliente(produto) {
-      this.clienteSelecionado = { ...produto }; // Copia o objeto cliente para evitar a modificação direta dos dados na tabela
+      this.clienteSelecionado = { ...produto };
     },
     fecharModal() {
       this.clienteSelecionado = null;
     },
     salvarEdicao() {
-      // Aqui você pode enviar os dados editados do cliente de volta para o servidor
-      // Por exemplo, usando axios.put() ou axios.patch()
-      // Não se esqueça de fechar a modal após a conclusão da operação
+
       this.fecharModal();
     }
   },
