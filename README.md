@@ -201,7 +201,7 @@ npm run serve
 ```
 <br>
 
-| <kbd>DELETE /clientes/detalhes/1:</kbd> | Atualiza os dados do cliente (só atualiza o campo desejado).
+| <kbd>DELETE /clientes/detalhes/1:</kbd> | Deleta o dado.
 
 **REQUEST**
 ```json
